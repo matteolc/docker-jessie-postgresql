@@ -1,0 +1,28 @@
+version: "3.3"
+services:
+  postgres:
+    image: voxbox/postgres
+    volumes:
+      - postgres-data:/var/log/postgresql  
+    ports:
+      - "5432:5432"      
+    environment:
+      - DEBUG=false
+      - DB_USER=
+      - DB_PASS=
+      - DB_NAME=
+      - DB_TEMPLATE=
+      - DB_EXTENSION=
+      - REPLICATION_MODE=
+      - REPLICATION_USER=
+      - REPLICATION_PASS=
+      - REPLICATION_SSLMODE=
+    deploy:
+      restart_policy:
+        condition: on-failure   
+    networks:
+      - postgres
+networks:
+  postgres: 
+volumes:
+  postgres-data:         
