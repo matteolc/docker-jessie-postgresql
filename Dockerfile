@@ -37,8 +37,7 @@ RUN apt-get update && \
     ln -sf ${PG_DATADIR}/postgresql.conf /etc/postgresql/${PG_VERSION}/main/postgresql.conf && \
     ln -sf ${PG_DATADIR}/pg_hba.conf /etc/postgresql/${PG_VERSION}/main/pg_hba.conf && \
     ln -sf ${PG_DATADIR}/pg_ident.conf /etc/postgresql/${PG_VERSION}/main/pg_ident.conf && \
-    rm -rf ${PG_HOME} && \
-    apt-get remove wget     
+    rm -rf ${PG_HOME}    
 
 COPY runtime/ ${PG_APP_HOME}/
 COPY entrypoint.sh /sbin/entrypoint.sh
