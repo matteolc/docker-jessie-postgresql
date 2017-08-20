@@ -348,6 +348,39 @@ create_database() {
   fi
 }
 
+set_kernel_limits() {
+  echo "Setting Kernel limits"
+  local mem_total_gb=$(free -g | grep Mem | awk '{ print $2 }') 
+  if [[ ${mem_total_gb} == 0 ]]; then
+    local shmmax=$((1024*512)) 
+  else
+    local shmmax=$((${mem_total_gb}/2*1024*1024)) 
+  fi
+  local page_size=$(getconf PAGE_SIZE)
+  local semmns=512000
+  local shmmni=4096    
+  local shmall=$((${shmmax}/${page_size})) 
+  local msgmni=1024
+
+  echo "Available memory is ${mem_total_gb} Gbytes"
+  echo "Pagesize is ${page_size}"  
+  echo "semmns is ${semmns}"
+  echo "shmmni is ${shmmni}"
+  echo "shmmax is ${shmmax}"
+  echo "shmall is ${shmall}"
+
+  echo "kernel.msgmni=${msgmni}" | sudo tee -a /etc/sysctl.conf
+  echo "kernel.msgmnb=65536" | sudo tee -a /etc/sysctl.conf
+  echo "kernel.msgmax=65536" | sudo tee -a /etc/sysctl.conf
+  echo 'fs.inotify.max_user_watches=524288' | sudo tee -a /etc/sysctl.conf
+    
+  echo "kernel.sem=250 ${semmns} 256 ${shmmni}" | sudo tee -a /etc/sysctl.conf  
+  echo "kernel.shmmax=${shmmax}" | sudo tee -a /etc/sysctl.conf
+  echo "kernel.shmall=${shmall}" | sudo tee -a /etc/sysctl.conf
+  sysctl -p  
+
+}
+
 create_replication_user() {
   if [[ -n ${REPLICATION_USER} ]]; then
     case $REPLICATION_MODE in
@@ -370,6 +403,9 @@ create_replication_user() {
 }
 
 configure_postgresql() {
+
+  set_kernel_limits
+
   initialize_database
   configure_recovery
   configure_ssl
