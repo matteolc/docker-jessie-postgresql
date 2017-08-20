@@ -9,7 +9,6 @@ LABEL \
 	voxbox.io.vcs-ref=${VCS_REF} \
 	voxbox.io.license=MIT
 
-ARG PG_APP_HOME 
 ARG PG_VERSION 
 ARG PG_USER 
 ARG PG_HOME 
@@ -17,7 +16,7 @@ ARG PG_RUNDIR
 ARG PG_LOGDIR 
 ARG PG_CERTDIR
 
-ENV PG_APP_HOME=${PG_APP_HOME:-/etc/docker-postgresql} \
+ENV PG_APP_HOME=/etc/docker-postgresql \
     PG_VERSION=${PG_VERSION:-9.6} \
     PG_USER=${PG_USER:-postgres} \
     PG_HOME=${PG_HOME:-/var/lib/postgresql} \
