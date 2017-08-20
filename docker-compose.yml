@@ -1,10 +1,10 @@
 version: "3.3"
 services:
-  postgres-master:
-    image: voxbox/postgres
+  master:
+    image: voxbox-postgres
     privileged: true
     volumes:
-      - postgres-data:/var/lib/postgresql  
+      - master-volume:/var/lib/postgresql  
     ports:
       - "5432:5432"      
     environment:
@@ -18,31 +18,15 @@ services:
       - REPLICATION_USER=repluser
       - REPLICATION_PASS=repluserpass
     deploy:
+      placement:
+        constraints: [node.labels.type == manager]    
       restart_policy:
         condition: on-failure   
     networks:
       - postgres
 
-  postgres-slave:
-    image: voxbox/postgres
-    privileged: true
-    ports:
-      - "5433:5432"      
-    environment:
-      - DEBUG=false
-      - PG_TRUST_LOCALNET=true
-      - REPLICATION_PORT=5432
-      - REPLICATION_HOST=master
-      - REPLICATION_MODE=slave
-      - REPLICATION_USER=repluser
-      - REPLICATION_PASS=repluserpass
-      - REPLICATION_SSLMODE=prefer
-    deploy:
-      restart_policy:
-        condition: on-failure   
-    networks:
-      - postgres      
+     
 networks:
   postgres: 
 volumes:
-  postgres-data:         
+  master-volume:
