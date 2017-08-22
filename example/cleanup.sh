@@ -27,6 +27,7 @@ docker swarm leave -f
 ssh root@$WORKER_IP docker swarm leave
 
 docker network prune -f
+docker volume prune -f
 
-rm -Rf /home/postgresql/master
-ssh root@$WORKER_IP rm -Rf /home/postgresql/replica
+ssh root@$WORKER_IP docker network prune -f
+ssh root@$WORKER_IP docker volume prune -f

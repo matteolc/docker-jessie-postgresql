@@ -4,7 +4,7 @@ services:
     image: voxbox/postgres
     hostname: master
     volumes:
-      - "/home/postgresql/master:/var/lib/postgresql"
+      - master-volume:/var/lib/postgresql
     ports:
       - "5432:5432"      
     environment:
@@ -32,7 +32,7 @@ services:
     ports:
       - "5433:5432"  
     volumes:
-      - "/home/postgresql/replica:/var/lib/postgresql"       
+      - replica-volume:/var/lib/postgresql
     environment:
       - DEBUG=false
       - PG_TRUST_LOCALNET=true
@@ -64,3 +64,8 @@ services:
 
 networks:
   postgres: 
+volumes:
+  master-volume:
+    driver: local
+  replica-volume:
+    driver: local
