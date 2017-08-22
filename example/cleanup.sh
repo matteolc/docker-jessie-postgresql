@@ -1,6 +1,6 @@
-#!/bin/bash 
+#!/bin/bash
 
-# Copyright 2017 Voxbox.io
+# Copyright 2017 Voxbxo.io
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -15,12 +15,18 @@
 
 echo "cleaning up ..."
 
-SERVICE_NAME=master
-VOLUME_NAME=$SERVICE_NAME-volume
+STACK_NAME=db
 
-docker service rm $SERVICE_NAME
+MANAGER_IP=192.168.18.130
+WORKER_IP=192.168.18.132
 
-SERVICE_NAME=replica
-VOLUME_NAME=$SERVICE_NAME-volume
+docker stack rm $STACK_NAME
 
-docker service rm $SERVICE_NAME
+docker swarm leave -f
+
+ssh root@$WORKER_IP docker swarm leave
+
+docker network prune -f
+
+rm -Rf /home/postgresql/master
+ssh root@$WORKER_IP rm -Rf /home/postgresql/replica
