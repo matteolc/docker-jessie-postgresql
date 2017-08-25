@@ -13,21 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-echo "cleaning up ..."
-
-STACK_NAME=db
-
-MANAGER_IP=192.168.18.130
+MANAGER_IP=$(ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')
 WORKER_IP=192.168.18.132
+MANAGER_DN=$(hostname)
+WORKER_DN=$(ssh root@$WORKER_IP hostname)
 
-docker stack rm $STACK_NAME
+docker service rm master
+docker service rm replica
 
 docker swarm leave -f
-
 ssh root@$WORKER_IP docker swarm leave
 
 docker network prune -f
-docker volume prune -f
-
 ssh root@$WORKER_IP docker network prune -f
+
+docker volume prune -f
 ssh root@$WORKER_IP docker volume prune -f
